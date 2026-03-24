@@ -1,3 +1,12 @@
+from langchain_postgres import PGVector
+from langchain_ollama import OllamaEmbeddings
+
+# Variáveis globais
+OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
+PG_VECTOR_COLLECTION_NAME = os.getenv("PG_VECTOR_COLLECTION_NAME")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
 PROMPT_TEMPLATE = """
 CONTEXTO:
 {contexto}
