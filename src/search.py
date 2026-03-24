@@ -65,6 +65,10 @@ RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
 def search_prompt(question=None):
+  if not question or not str(question).strip():
+    return "Não tenho informações necessárias para responder sua pergunta."
+
+  print(f"Iniciando a busca com a pergunta: {question}")
   embeddings = OllamaEmbeddings(model=OLLAMA_EMBED_MODEL)
   llm_en = ChatOllama(model="llama3", temperature=0.5)
 
@@ -109,10 +113,8 @@ def search_prompt(question=None):
   
   pipeline = map_stage | prepare_reduce_inputs | reduce_chain
   result = pipeline.invoke(docs)
-  print(result)
   return result
   
 
-if __name__ == "__main__":
-  #search_prompt("Qual o faturamento da Empresa SuperTechIABrazil?")
-  search_prompt("Qual é a capital da França?")
+# if __name__ == "__main__":
+#   pass
