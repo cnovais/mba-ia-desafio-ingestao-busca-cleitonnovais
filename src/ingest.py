@@ -5,6 +5,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from langchain_postgres import PGVector
 from langchain_ollama import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
                                      
 
 load_dotenv()
@@ -14,9 +16,21 @@ PDF_PATH = os.getenv("PDF_PATH")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "150"))
 OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
+OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-large")
+GOOGLE_EMBED_MODEL = os.getenv("GOOGLE_EMBED_MODEL", "models/embedding-001")
 PG_VECTOR_COLLECTION_NAME = os.getenv("PG_VECTOR_COLLECTION_NAME")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+def _build_embeddings(model: str):
+  selected = (model or "local").strip().lower()
+  if selected == "openai":
+    print(f"Usando modelo OpenAI: {OPENAI_EMBED_MODEL}")
+    return OpenAIEmbeddings(model=OPENAI_EMBED_MODEL)
+  if selected == "gemini":
+    print(f"Usando modelo Gemini: {GOOGLE_EMBED_MODEL}")
+    return GoogleGenerativeAIEmbeddings(model=GOOGLE_EMBED_MODEL)
+  print(f"Usando modelo Ollama: {OLLAMA_EMBED_MODEL}")
+  return OllamaEmbeddings(model=OLLAMA_EMBED_MODEL)
 
 def ingest_pdf():
 
@@ -43,6 +57,7 @@ def ingest_pdf():
     ids = [f"id_{i}" for i in range(len(content))]
 
     #transformando o conteudo em embeddings
+    # embeddings = _build_embeddings("local")
     embeddings = OllamaEmbeddings(model=OLLAMA_EMBED_MODEL)
 
     #Inserindo os dados no banco de dados
